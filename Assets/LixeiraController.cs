@@ -1,32 +1,30 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class LixeiraController : MonoBehaviour
 {
-    public float velocity;
+    public float velocidade = 35f;
 
-    // Start is called before the first frame update
+    private float limiteX;
+    private LixoSpawnerController controller;
+
     void Start()
     {
-        
+        controller = FindObjectOfType<LixoSpawnerController>();
+
+        if (controller != null)
+            limiteX = controller.GetLimiteX();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        this.transform.position += new Vector3(horizontalInput*velocity,0,0);
-        if(this.transform.position.x>10)
-        {
-            this.transform.position = new Vector3(10, 
-                                                  this.transform.position.y,
-                                                  this.transform.position.z);
-        }else if (this.transform.position.x<-10)
-        {
-            this.transform.position = new Vector3(-10, 
-                                                  this.transform.position.y,
-                                                  this.transform.position.z);
-        }
+        float input = Input.GetAxisRaw("Horizontal");
+
+        transform.position += new Vector3(input * velocidade * Time.deltaTime, 0, 0);
+
+        transform.position = new Vector3(
+            Mathf.Clamp(transform.position.x, -limiteX, limiteX),
+            transform.position.y,
+            controller.transform.position.z
+        );
     }
 }
